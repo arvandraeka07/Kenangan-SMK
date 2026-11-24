@@ -609,12 +609,19 @@
     });
   }
 
+  /* Kartu galeri memakai versi ringan; lightbox tetap memakai file asli. */
+  function cardFile(photo) {
+    return String(photo.file)
+      .replace("/images/", "/images/gallery-cards/")
+      .replace(/\.[^.]+$/, ".jpg");
+  }
+
   function makeCard(photo, index) {
     var w = photo.w || 0;
     var h = photo.h || 0;
     return '<article class="gallery-card" data-shape="' + shapeOf(w, h) + '" data-frame="' + escapeHtml(photo.style || "bleed") + '" style="--ar:' + ratio(w, h) + ';--card-i:' + (index % 6) + '">' +
       '<button class="gallery-card__media" type="button" data-index="' + index + '" aria-label="Buka foto: ' + escapeHtml(photo.caption) + '">' +
-        '<img src="' + escapeHtml(photo.file) + '" alt="' + escapeHtml(photo.alt || photo.caption) + '"' +
+        '<img src="' + escapeHtml(cardFile(photo)) + '" data-full="' + escapeHtml(photo.file) + '" alt="' + escapeHtml(photo.alt || photo.caption) + '"' +
           (w ? ' width="' + w + '" height="' + h + '"' : "") +
           ' loading="lazy" decoding="async">' +
         '<span class="gallery-card__stamp">' + escapeHtml(photo.frame || "Bingkai") + '</span>' +
@@ -648,6 +655,14 @@
             h: photo.h
           };
         }), Number(button.getAttribute("data-index")), button);
+      });
+    });
+
+    $$(".gallery-card__media img", galleryGrid).forEach(function (img) {
+      img.addEventListener("error", function () {
+        if (img.dataset.fallback) return;
+        img.dataset.fallback = "1";
+        img.src = img.dataset.full;
       });
     });
 
