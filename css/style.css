@@ -2404,6 +2404,8 @@ ol, ul { padding: 0; list-style: none; }
   gap: 12px;
 }
 .wall-entry__head strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
   color: var(--navy);
   font-family: var(--serif);
   font-size: 1.14rem;
