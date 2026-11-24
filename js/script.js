@@ -733,7 +733,7 @@
     if ("fetchPriority" in preload) preload.fetchPriority = "high";
     preload.src = item.file;
     /* Jangan biarkan panggung terkunci kalau pratinjau lambat. */
-    setTimeout(swapCommit, 1200);
+    setTimeout(swapCommit, 2500);
 
     if (randomCaption) randomCaption.textContent = item.caption || "";
     if (randomCount) {
@@ -763,10 +763,21 @@
   function renderContactSheet() {
     if (!randomStrip) return;
     randomStrip.innerHTML = randomPhotos.map(function (item, i) {
+      /* Thumbnail ringan: memakai foto ukuran penuh untuk 119 lembar kontak
+         berarti puluhan MB dan membuat foto panggung gagal dimuat. */
+      var thumb = item.file.replace("/random/", "/random-thumbs/").replace(/\.[^.]+$/, ".jpg");
       return '<button class="contact-sheet__item" type="button" data-random="' + i + '" style="--ar:' + ratio(item.w, item.h, "1") + '" aria-label="Tampilkan arsip ' + (i + 1) + '">' +
-        '<img src="' + escapeHtml(item.file) + '" alt="" loading="lazy" decoding="async" fetchpriority="low">' +
+        '<img src="' + escapeHtml(thumb) + '" data-full="' + escapeHtml(item.file) + '" alt="" loading="lazy" decoding="async" fetchpriority="low">' +
       '</button>';
     }).join("");
+
+    $$(".contact-sheet__item img", randomStrip).forEach(function (img) {
+      img.addEventListener("error", function () {
+        if (img.dataset.fallback) return;
+        img.dataset.fallback = "1";
+        img.src = img.dataset.full;
+      });
+    });
 
     $$("[data-random]", randomStrip).forEach(function (button) {
       button.addEventListener("click", function () {
