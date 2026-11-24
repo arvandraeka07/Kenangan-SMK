@@ -84,7 +84,7 @@ window.DKV3_MEDIA = {
       "h": 2044
     },
     {
-      "file": "assets/images/photo-06.jpg",
+      "file": "assets/images/photo-06.JPG",
       "alt": "Foto kelas di halaman villa dengan cat muka dan banner DKVEARLESS.",
       "caption": "Villa, cat muka, dan banner DKV 3. Momen yang nggak akan kita ulang.",
       "category": "Kenangan Terakhir",
@@ -144,7 +144,7 @@ window.DKV3_MEDIA = {
       "h": 2044
     },
     {
-      "file": "assets/images/photo-12.JPG",
+      "file": "assets/images/photo-12.jpg",
       "alt": "Foto kelas di halaman villa dengan banner dan cat muka.",
       "caption": "Bedak muka masih sisa, banner masih dipegang, tawa masih sama.",
       "category": "Kenangan Terakhir",
@@ -1136,8 +1136,8 @@ window.DKV3_MEDIA = {
       "id": "dari-atas",
       "title": "Dari Atas",
       "caption": "Rekaman drone waktu kita sampai di penghujung kisah.",
-      "src": "assets/videos/DJI_0834.MP4",
-      "poster": "assets/images/photo-12.JPG",
+      "src": "assets/videos/DJI_0834.mp4",
+      "poster": "assets/images/photo-12.jpg",
       "orientation": "landscape",
       "kind": "extra",
       "w": 1920,

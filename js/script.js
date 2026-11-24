@@ -715,16 +715,25 @@
     var item = randomPhotos[state.randomIndex];
 
     randomImage.classList.add("is-swapping");
-    var preload = new Image();
-    preload.onload = function () {
+    var swapSettled = false;
+    var swapCommit = function () {
+      if (swapSettled) return;
+      swapSettled = true;
       randomImage.src = item.file;
       randomImage.alt = item.alt || "Momen random DKV 3";
       randomImage.classList.remove("is-swapping");
     };
+    var preload = new Image();
+    preload.onload = swapCommit;
     preload.onerror = function () {
+      if (swapSettled) return;
+      swapSettled = true;
       randomImage.classList.remove("is-swapping");
     };
+    if ("fetchPriority" in preload) preload.fetchPriority = "high";
     preload.src = item.file;
+    /* Jangan biarkan panggung terkunci kalau pratinjau lambat. */
+    setTimeout(swapCommit, 1200);
 
     if (randomCaption) randomCaption.textContent = item.caption || "";
     if (randomCount) {
@@ -739,9 +748,13 @@
       if (active && active.getBoundingClientRect && randomStrip.scrollTo) {
         var box = active.getBoundingClientRect();
         var stripBox = randomStrip.getBoundingClientRect();
+        var target = randomStrip.scrollLeft + (box.left - stripBox.left) - (stripBox.width - box.width) / 2;
+        /* Lompat jauh harus instan: geser halus melewati puluhan thumbnail
+           dan memicu puluhan unduhan gambar sekaligus. */
+        var farJump = Math.abs(target - randomStrip.scrollLeft) > stripBox.width * 1.5;
         randomStrip.scrollTo({
-          left: randomStrip.scrollLeft + (box.left - stripBox.left) - (stripBox.width - box.width) / 2,
-          behavior: reduceMotion ? "auto" : "smooth"
+          left: target,
+          behavior: reduceMotion || farJump ? "auto" : "smooth"
         });
       }
     }
@@ -751,7 +764,7 @@
     if (!randomStrip) return;
     randomStrip.innerHTML = randomPhotos.map(function (item, i) {
       return '<button class="contact-sheet__item" type="button" data-random="' + i + '" style="--ar:' + ratio(item.w, item.h, "1") + '" aria-label="Tampilkan arsip ' + (i + 1) + '">' +
-        '<img src="' + escapeHtml(item.file) + '" alt="" loading="lazy" decoding="async">' +
+        '<img src="' + escapeHtml(item.file) + '" alt="" loading="lazy" decoding="async" fetchpriority="low">' +
       '</button>';
     }).join("");
 
